@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="row mt-5">
+        <div class="row mt-5" v-if="$gate.isAdminOrAuthor()">
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
@@ -27,7 +27,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="user in users">
+                    <tr v-for="user in users" >
                       <td>{{user.id}}</td>
                       <td>{{user.name}}</td>
                       <td>{{user.email}}</td>
@@ -50,6 +50,10 @@
             </div>
             <!-- /.card -->
           </div>
+        </div>
+
+        <div v-if="!$gate.isAdminOrAuthor()">
+            <not-found></not-found>
         </div>
 
         <!-- Modal -->
@@ -198,10 +202,24 @@
                 })
             },
             loadUsers() {
-                axios.get('api/user').then(({ data }) => (this.users = data.data));
+                if(this.$gate.isAdminOrAuthor()) {
+                    axios.get('api/user')
+                    .then(({ data }) => (this.users = data.data));
+                }
             }
         },
         created() {
+            Fire.$on('searching', () => {
+                let query = this.$parent.search;
+                axios.get('api/findUser?q='+ query)
+                .then(({data}) => {
+                    this.users = data.data
+                })
+                .catch(() => {
+
+                });
+
+            });
             this.loadUsers();
             Fire.$on('reload', () => {
                 this.loadUsers();

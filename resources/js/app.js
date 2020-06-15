@@ -11,6 +11,9 @@ window.Vue = require('vue');
 import { Form, HasError, AlertError } from 'vform'
 import moment from 'moment'
 
+import Gate from './Gate';
+Vue.prototype.$gate = new Gate(window.user);
+
 import Swal from 'sweetalert2'
 window.Swal = Swal;
 
@@ -47,8 +50,10 @@ Vue.use(VueProgressBar, {
 
 let routes = [
     { path: '/dashboard', component: require('./components/Dashboard.vue').default},
+    { path: '/developer', component: require('./components/Developer.vue').default},
     { path: '/profile', component: require('./components/Profile.vue').default},
-    { path: '/users', component: require('./components/Users.vue').default}
+    { path: '/users', component: require('./components/Users.vue').default},
+    { path: '*', component: require('./components/404Page.vue').default}
   ];
 
 const router = new VueRouter({
@@ -81,6 +86,11 @@ Vue.component(
     require('./components/passport/PersonalAccessTokens.vue').default
 );
 
+Vue.component(
+    'not-found',
+    require('./components/404Page.vue').default
+);
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -102,5 +112,17 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 const app = new Vue({
     el: '#app',
-    router
+    router,
+    data: {
+        search: ''
+    },
+
+    methods: {
+        searchit:_debounce(() => {
+            Fire.$emit('searching');
+        }, 2000)
+    }
+
+
+
 });
