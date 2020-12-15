@@ -1,6 +1,7 @@
-## Admin Dashboard with Laravel Api and Vuejs
+### CRUD Application with Laravel Api and Vuejs
 
-- Registration page
-- Login page
+- Admin panel
+- Users role
 - Api Authentication
-- Users Table
+- Users management
+- Search functionality
